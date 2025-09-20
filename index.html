@@ -9,15 +9,28 @@
   <link rel="stylesheet" href="/assets/css/style.css" />
 </head>
 <body>
+  <!-- Loading Screen -->
+  <div id="loading-screen" class="loading-screen">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <p>در حال بارگذاری...</p>
+    </div>
+  </div>
+
   <header class="nav">
     <div class="nav-inner">
       <div class="brand">TooLs</div>
       <nav class="nav-links">
-        <a href="#features">مزایا</a>
-        <a href="#pricing">پلن‌ها</a>
-        <a href="#contact">تماس</a>
+        <a href="#features" data-tooltip="مشاهده مزایای ما">مزایا</a>
+        <a href="#pricing" data-tooltip="انتخاب پلن مناسب">پلن‌ها</a>
+        <a href="#contact" data-tooltip="ارتباط با پشتیبانی">تماس</a>
         <button id="btn-auth" class="btn ghost">ورود / ثبت‌نام</button>
       </nav>
+      <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </div>
   </header>
 
@@ -25,7 +38,7 @@
     <section class="hero glass">
       <div class="hero-content">
         <h1>TooLs</h1>
-        <p>مجموعه ابزارهای سبک با طراحی شیشه‌ای و تم مشکی/سفید.</p>
+        <p>ابزارهای گیمینگ، دیوایس‌های مختلف، تنظیمات WireGuard و سرویس‌های تخصصی با طراحی شیشه‌ای مدرن.</p>
         <div class="hero-cta">
           <a href="#pricing" class="btn primary">خرید پلن</a>
           <button id="btn-learn" class="btn">بیشتر بدانید</button>
@@ -37,55 +50,107 @@
     </section>
 
     <section id="features" class="section">
-      <h2>چرا ما؟</h2>
+      <div class="section-header">
+        <h2>چرا ما؟</h2>
+        <p class="section-subtitle">مزایای منحصر به فرد که ما ارائه می‌دهیم</p>
+      </div>
       <div class="cards">
-        <div class="card glass">
+        <div class="card glass feature-card" data-aos="fade-up" data-aos-delay="100">
+          <div class="feature-icon">⚡</div>
           <h3>سرعت پایدار</h3>
           <p>شبکه بهینه‌سازی شده برای Latency پایین و Throughput بالا.</p>
+          <div class="feature-stats">
+            <div class="stat">
+              <span class="stat-number">99.9%</span>
+              <span class="stat-label">آپتایم</span>
+            </div>
+          </div>
         </div>
-        <div class="card glass">
+        <div class="card glass feature-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="feature-icon">🔒</div>
           <h3>امنیت واقعی</h3>
           <p>WireGuard با رمزنگاری مدرن + DNS بدون لاگ.</p>
+          <div class="feature-stats">
+            <div class="stat">
+              <span class="stat-number">256-bit</span>
+              <span class="stat-label">رمزنگاری</span>
+            </div>
+          </div>
         </div>
-        <div class="card glass">
+        <div class="card glass feature-card" data-aos="fade-up" data-aos-delay="300">
+          <div class="feature-icon">⚙️</div>
           <h3>مدیریت آسان</h3>
           <p>داشبورد ساده برای مشاهده وضعیت و دریافت کانفیگ.</p>
+          <div class="feature-stats">
+            <div class="stat">
+              <span class="stat-number">1-کلیک</span>
+              <span class="stat-label">راه‌اندازی</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
     <section id="pricing" class="section">
-      <h2>پلن‌ها</h2>
+      <div class="section-header">
+        <h2>پلن‌ها</h2>
+        <p class="section-subtitle">بهترین قیمت برای نیازهای شما</p>
+      </div>
+      <div class="pricing-toggle">
+        <span class="toggle-label">ماهانه</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="pricing-toggle">
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label">سالانه <span class="discount-badge">20% تخفیف</span></span>
+      </div>
       <div class="cards">
-        <div class="card glass price">
-          <h3>پایه</h3>
-          <p class="price-tag">99 هزار تومان / ماه</p>
-          <ul>
-            <li>DNS اختصاصی</li>
-            <li>۱ کانفیگ WireGuard</li>
-            <li>پشتیبانی تیکتی</li>
+        <div class="card glass price" data-aos="fade-up" data-aos-delay="100">
+          <div class="plan-header">
+            <h3>پایه</h3>
+            <div class="price-container">
+              <p class="price-tag monthly-price">99 هزار تومان / ماه</p>
+              <p class="price-tag yearly-price" style="display:none">950 هزار تومان / سال</p>
+            </div>
+          </div>
+          <ul class="feature-list">
+            <li><span class="checkmark">✓</span> DNS اختصاصی</li>
+            <li><span class="checkmark">✓</span> ۱ کانفیگ WireGuard</li>
+            <li><span class="checkmark">✓</span> پشتیبانی تیکتی</li>
+            <li><span class="crossmark">✗</span> پشتیبانی 24/7</li>
           </ul>
-          <button class="btn primary requires-auth">شروع</button>
+          <button class="btn primary requires-auth pulse-btn">شروع کنید</button>
         </div>
-        <div class="card glass price featured">
-          <h3>حرفه‌ای</h3>
-          <p class="price-tag">199 هزار تومان / ماه</p>
-          <ul>
-            <li>DNS اختصاصی</li>
-            <li>۳ کانفیگ WireGuard</li>
-            <li>پشتیبانی سریع</li>
+        <div class="card glass price featured" data-aos="fade-up" data-aos-delay="200">
+          <div class="plan-header">
+            <h3>حرفه‌ای</h3>
+            <div class="price-container">
+              <p class="price-tag monthly-price">199 هزار تومان / ماه</p>
+              <p class="price-tag yearly-price" style="display:none">1,900 هزار تومان / سال</p>
+            </div>
+          </div>
+          <ul class="feature-list">
+            <li><span class="checkmark">✓</span> DNS اختصاصی</li>
+            <li><span class="checkmark">✓</span> ۳ کانفیگ WireGuard</li>
+            <li><span class="checkmark">✓</span> پشتیبانی سریع</li>
+            <li><span class="checkmark">✓</span> پشتیبانی 24/7</li>
           </ul>
-          <button class="btn primary requires-auth">شروع</button>
+          <button class="btn primary requires-auth pulse-btn">شروع کنید</button>
         </div>
-        <div class="card glass price">
-          <h3>سازمانی</h3>
-          <p class="price-tag">تماس بگیرید</p>
-          <ul>
-            <li>DNS اختصاصی</li>
-            <li>کانفیگ نامحدود</li>
-            <li>پشتیبانی اختصاصی</li>
+        <div class="card glass price" data-aos="fade-up" data-aos-delay="300">
+          <div class="plan-header">
+            <h3>سازمانی</h3>
+            <div class="price-container">
+              <p class="price-tag">تماس بگیرید</p>
+            </div>
+          </div>
+          <ul class="feature-list">
+            <li><span class="checkmark">✓</span> DNS اختصاصی</li>
+            <li><span class="checkmark">✓</span> کانفیگ نامحدود</li>
+            <li><span class="checkmark">✓</span> پشتیبانی اختصاصی</li>
+            <li><span class="checkmark">✓</span> SLA تضمینی</li>
           </ul>
-          <a class="btn" href="#contact">ارتباط</a>
+          <a class="btn" href="#contact">ارتباط با ما</a>
         </div>
       </div>
     </section>
@@ -102,12 +167,81 @@
   </main>
 
   <footer class="footer">
-    <div class="footer-inner glass">
-      <div id="user-state">مهمان</div>
-      <div>
-        <a href="/admin.html" class="link">پنل ادمین</a>
+    <div class="footer-content">
+      <!-- Main Footer -->
+      <div class="footer-main glass">
+        <div class="footer-section">
+          <div class="footer-brand">
+            <h3>TooLs</h3>
+            <p>ابزارهای حرفه‌ای برای گیمرها و تکنولوژی‌های مدرن</p>
+            <div class="social-links">
+              <a href="https://t.me/Minimalcraft" target="_blank" class="social-link" data-tooltip="تلگرام ما">
+                <span class="social-icon">💬</span>
+              </a>
+              <a href="https://t.me/PersianEdge" target="_blank" class="social-link" data-tooltip="کانال اسپانسر">
+                <span class="social-icon">📡</span>
+              </a>
+              <a href="https://t.me/NoiDUsers" target="_blank" class="social-link" data-tooltip="کانال کاربران">
+                <span class="social-icon">👥</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="footer-section">
+          <h4>سرویس‌ها</h4>
+          <ul class="footer-links">
+            <li><a href="#features">مزایای ما</a></li>
+            <li><a href="#pricing">پلن‌های قیمتی</a></li>
+            <li><a href="#contact">پشتیبانی</a></li>
+            <li><a href="/admin.html">پنل مدیریت</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h4>ابزارها</h4>
+          <ul class="footer-links">
+            <li><a href="#">تنظیمات WireGuard</a></li>
+            <li><a href="#">ابزارهای گیمینگ</a></li>
+            <li><a href="#">مدیریت دیوایس</a></li>
+            <li><a href="#">سرویس‌های تخصصی</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h4>وضعیت کاربر</h4>
+          <div class="user-status-card">
+            <div class="status-indicator">
+              <span class="status-dot"></span>
+              <span id="user-state">مهمان</span>
+            </div>
+            <div class="quick-stats">
+              <div class="stat-item">
+                <span class="stat-icon">⚡</span>
+                <span class="stat-text">آنلاین</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-icon">🔒</span>
+                <span class="stat-text">امن</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div>© <span id="year"></span> TooLs</div>
+      
+      <!-- Footer Bottom -->
+      <div class="footer-bottom glass">
+        <div class="footer-bottom-content">
+          <div class="copyright">
+            <span>© <span id="year"></span> TooLs - تمامی حقوق محفوظ است</span>
+          </div>
+          <div class="footer-meta">
+            <span class="version">v2.0</span>
+            <span class="separator">•</span>
+            <span class="status-text">عملیاتی</span>
+          </div>
+        </div>
+      </div>
     </div>
   </footer>
 
@@ -116,14 +250,27 @@
       <button class="modal-close" aria-label="Close" onclick="app.closeAuth()">×</button>
       <h3>ورود / ثبت‌نام</h3>
       <form id="form-auth" class="form">
-        <label>
-          نام کاربری
+        <div class="input-group">
+          <label for="username">نام کاربری</label>
           <input type="text" id="username" required placeholder="username" />
-        </label>
-        <label>
-          رمز عبور
-          <input type="password" id="password" required placeholder="حداقل ۸ کاراکتر" minlength="8" />
-        </label>
+          <div class="input-feedback" id="username-feedback"></div>
+        </div>
+        <div class="input-group">
+          <label for="password">رمز عبور</label>
+          <div class="password-container">
+            <input type="password" id="password" required placeholder="حداقل ۸ کاراکتر" minlength="8" />
+            <button type="button" class="password-toggle" id="password-toggle">
+              <span class="eye-icon">👁️</span>
+            </button>
+          </div>
+          <div class="password-strength" id="password-strength">
+            <div class="strength-bar">
+              <div class="strength-fill"></div>
+            </div>
+            <span class="strength-text">قدرت رمز عبور</span>
+          </div>
+          <div class="input-feedback" id="password-feedback"></div>
+        </div>
         <div id="captcha-box" class="captcha-box">
           <div class="captcha-row">
             <span id="captcha-text" class="captcha-text">— — — —</span>
@@ -133,7 +280,6 @@
             تایید: «من ربات نیستم»
             <input type="text" id="captcha-input" placeholder="کد نمایش داده شده" autocomplete="off" />
           </label>
-          <small class="muted">حروف و اعداد به طول ۴ یا ۵ کاراکتر</small>
         </div>
         <div class="form-actions">
           <button type="submit" class="btn primary">ادامه</button>

@@ -24,11 +24,19 @@ const app = (() => {
       const c = await api('/api/auth/captcha');
       captcha = c;
       const el = $('captcha-text');
-      if(el){ el.textContent = c.text; el.dataset.ts = c.ts; el.dataset.sig = c.sig; }
+      if(el){ 
+        el.textContent = c.text || '— — — —'; 
+        el.dataset.ts = c.ts; 
+        el.dataset.sig = c.sig; 
+        el.style.color = 'var(--white)';
+      }
     }catch{
-      // Fallback display
+      // Fallback display - don't show error, just show placeholder
       const el = $('captcha-text');
-      if(el) el.textContent = 'خطا در دریافت کپچا';
+      if(el) {
+        el.textContent = '— — — —';
+        el.style.color = 'var(--muted)';
+      }
     }
   }
 
@@ -111,14 +119,174 @@ const app = (() => {
     try{ localStorage.removeItem('user'); }catch{}
   }
 
+  // Enhanced UX Features
+  function initLoadingScreen(){
+    const loadingScreen = document.getElementById('loading-screen');
+    // Simulate loading time for better UX
+    setTimeout(() => {
+      loadingScreen.classList.add('hidden');
+      // Remove from DOM after animation
+      setTimeout(() => loadingScreen.remove(), 500);
+    }, 1500);
+  }
+
+  function initMobileMenu(){
+    const toggle = document.getElementById('mobile-menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    
+    if(toggle && navLinks){
+      toggle.addEventListener('click', () => {
+        toggle.classList.toggle('active');
+        navLinks.classList.toggle('active');
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if(!toggle.contains(e.target) && !navLinks.contains(e.target)){
+          toggle.classList.remove('active');
+          navLinks.classList.remove('active');
+        }
+      });
+    }
+  }
+
+  function initPricingToggle(){
+    const toggle = document.getElementById('pricing-toggle');
+    const monthlyPrices = document.querySelectorAll('.monthly-price');
+    const yearlyPrices = document.querySelectorAll('.yearly-price');
+    
+    if(toggle){
+      toggle.addEventListener('change', () => {
+        const isYearly = toggle.checked;
+        monthlyPrices.forEach(el => el.style.display = isYearly ? 'none' : 'block');
+        yearlyPrices.forEach(el => el.style.display = isYearly ? 'block' : 'none');
+      });
+    }
+  }
+
+  function initPasswordToggle(){
+    const toggleBtn = document.getElementById('password-toggle');
+    const passwordInput = document.getElementById('password');
+    
+    if(toggleBtn && passwordInput){
+      toggleBtn.addEventListener('click', () => {
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+        toggleBtn.querySelector('.eye-icon').textContent = type === 'password' ? '👁️' : '🙈';
+      });
+    }
+  }
+
+  function initPasswordStrength(){
+    const passwordInput = document.getElementById('password');
+    const strengthFill = document.querySelector('.strength-fill');
+    const strengthText = document.querySelector('.strength-text');
+    
+    if(passwordInput && strengthFill && strengthText){
+      passwordInput.addEventListener('input', () => {
+        const password = passwordInput.value;
+        const strength = calculatePasswordStrength(password);
+        
+        strengthFill.style.width = `${strength.percentage}%`;
+        strengthText.textContent = strength.text;
+        strengthText.style.color = strength.color;
+      });
+    }
+  }
+
+  function calculatePasswordStrength(password){
+    let score = 0;
+    if(password.length >= 8) score += 25;
+    if(password.match(/[a-z]/)) score += 25;
+    if(password.match(/[A-Z]/)) score += 25;
+    if(password.match(/[0-9]/)) score += 25;
+    
+    if(score <= 25) return {percentage: 25, text: 'ضعیف', color: '#f87171'};
+    if(score <= 50) return {percentage: 50, text: 'متوسط', color: '#fbbf24'};
+    if(score <= 75) return {percentage: 75, text: 'خوب', color: '#4ade80'};
+    return {percentage: 100, text: 'عالی', color: '#10b981'};
+  }
+
+  function initFormValidation(){
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const usernameFeedback = document.getElementById('username-feedback');
+    const passwordFeedback = document.getElementById('password-feedback');
+    
+    if(usernameInput && usernameFeedback){
+      usernameInput.addEventListener('blur', () => {
+        const username = usernameInput.value.trim();
+        if(username.length < 3){
+          showFeedback(usernameFeedback, 'نام کاربری باید حداقل ۳ کاراکتر باشد', 'error');
+        } else if(!/^[a-zA-Z0-9_]+$/.test(username)){
+          showFeedback(usernameFeedback, 'فقط حروف انگلیسی، اعداد و _ مجاز است', 'error');
+        } else {
+          showFeedback(usernameFeedback, 'نام کاربری معتبر است', 'success');
+        }
+      });
+    }
+    
+    if(passwordInput && passwordFeedback){
+      passwordInput.addEventListener('blur', () => {
+        const password = passwordInput.value;
+        if(password.length < 8){
+          showFeedback(passwordFeedback, 'رمز عبور باید حداقل ۸ کاراکتر باشد', 'error');
+        } else {
+          showFeedback(passwordFeedback, '', 'success');
+        }
+      });
+    }
+  }
+
+  function showFeedback(element, message, type){
+    element.textContent = message;
+    element.className = `input-feedback ${type}`;
+  }
+
+  function initScrollAnimations(){
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+    
+    // Observe all cards
+    document.querySelectorAll('.card').forEach(card => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px)';
+      card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(card);
+    });
+  }
+
   function init(){
     document.getElementById('year').textContent = new Date().getFullYear();
+    
+    // Initialize all enhanced features
+    initLoadingScreen();
+    initMobileMenu();
+    initPricingToggle();
+    initPasswordToggle();
+    initPasswordStrength();
+    initFormValidation();
+    initScrollAnimations();
+    
+    // Original functionality
     document.getElementById('btn-auth').addEventListener('click', openAuth);
     document.getElementById('form-auth').addEventListener('submit', handleAuthSubmit);
     document.getElementById('btn-logout').addEventListener('click', logout);
     document.getElementById('btn-learn')?.addEventListener('click', () => location.hash = '#features');
     document.getElementById('btn-logout-profile')?.addEventListener('click', logout);
     document.getElementById('btn-refresh-captcha')?.addEventListener('click', () => { loadCaptcha(); $('captcha-input').value=''; });
+    
     // Enforce requires-auth on CTA buttons
     function bindAuthRequired(){
       document.querySelectorAll('.requires-auth').forEach(btn => {
@@ -128,6 +296,7 @@ const app = (() => {
         });
       });
     }
+    
     loadCaptcha();
     syncUser();
     bindAuthRequired();

@@ -7,9 +7,42 @@
   <link rel="stylesheet" href="/assets/css/style.css" />
 </head>
 <body>
-  <header class="nav"><div class="nav-inner"><div class="brand">TooLs Admin</div><a class="link" href="/">بازگشت</a></div></header>
+  <header class="nav admin-nav"><div class="nav-inner"><div class="brand">TooLs Admin</div><a class="link" href="/">بازگشت</a></div></header>
   <main class="section">
     <h2>داشبورد ادمین</h2>
+
+    <!-- System Status (Always Visible) -->
+    <section class="glass card" style="margin-bottom:20px">
+      <h3 style="margin-top:0">🔍 وضعیت سیستم</h3>
+      <div class="status-overview">
+        <div class="status-grid">
+          <div class="status-item">
+            <div class="status-icon">🗄️</div>
+            <div class="status-info">
+              <h4>اتصال KV</h4>
+              <span id="public-kv-pill" class="pill">در حال بررسی...</span>
+            </div>
+          </div>
+          <div class="status-item">
+            <div class="status-icon">⚙️</div>
+            <div class="status-info">
+              <h4>پیکربندی</h4>
+              <span id="public-config-pill" class="pill">در حال بررسی...</span>
+            </div>
+          </div>
+          <div class="status-item">
+            <div class="status-icon">🌐</div>
+            <div class="status-info">
+              <h4>سرویس</h4>
+              <span id="public-service-pill" class="pill">در حال بررسی...</span>
+            </div>
+          </div>
+        </div>
+        <div class="status-message" id="status-message">
+          <p class="muted">در حال بررسی وضعیت سیستم...</p>
+        </div>
+      </div>
+    </section>
 
     <section id="admin-auth" class="glass card" style="margin-bottom:16px">
       <h3 style="margin-top:0">ورود ادمین</h3>
@@ -29,29 +62,111 @@
     </section>
 
     <section id="admin-dash" class="glass card" style="display:none">
-      <p class="muted" style="margin:0 0 10px">نمایش خلاصه وضعیت سرویس</p>
-      <div class="dash-grid">
-        <div class="dash-card">
-          <h4>اتصال KV</h4>
-          <span id="kv-pill" class="pill">—</span>
-        </div>
-        <div class="dash-card">
-          <h4>ادمین</h4>
-          <span id="admin-pill" class="pill">—</span>
-        </div>
-        <div class="dash-card">
-          <h4>تعداد کاربران</h4>
-          <div id="users-count" class="muted">—</div>
-        </div>
-        <div class="dash-card">
-          <h4>وضعیت سرویس</h4>
-          <span id="svc-pill" class="pill">—</span>
+      <p class="muted" style="margin:0 0 20px">نمایش خلاصه وضعیت سرویس و پیکربندی</p>
+      
+      <!-- System Status -->
+      <div class="status-section">
+        <h3 style="margin-bottom: 16px; color: var(--white); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">🔧 وضعیت سیستم</h3>
+        <div class="dash-grid">
+          <div class="dash-card">
+            <div class="status-header">
+              <h4>🗄️ اتصال KV</h4>
+              <span id="kv-pill" class="pill">—</span>
+            </div>
+            <p class="status-desc">وضعیت اتصال به Cloudflare KV</p>
+          </div>
+          <div class="dash-card">
+            <div class="status-header">
+              <h4>👤 ادمین</h4>
+              <span id="admin-pill" class="pill">—</span>
+            </div>
+            <p class="status-desc">وضعیت پیکربندی حساب ادمین</p>
+          </div>
+          <div class="dash-card">
+            <div class="status-header">
+              <h4>🌐 سرویس</h4>
+              <span id="svc-pill" class="pill">—</span>
+            </div>
+            <p class="status-desc">وضعیت کلی سرویس</p>
+          </div>
+          <div class="dash-card">
+            <div class="status-header">
+              <h4>👥 کاربران</h4>
+              <div id="users-count" class="user-count">—</div>
+            </div>
+            <p class="status-desc">تعداد کاربران ثبت‌نام شده</p>
+          </div>
         </div>
       </div>
-      <div style="margin-top:16px">
-        <button class="btn" id="btnList">دریافت لیست کاربران</button>
+
+      <!-- Environment Variables Status -->
+      <div class="status-section">
+        <h3 style="margin: 24px 0 16px; color: var(--white); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">⚙️ متغیرهای محیطی (ENV)</h3>
+        <div class="dash-grid">
+          <div class="dash-card">
+            <div class="status-header">
+              <h4>🔑 ADMIN_USER</h4>
+              <span id="admin-user-pill" class="pill">—</span>
+            </div>
+            <p class="status-desc">نام کاربری ادمین</p>
+          </div>
+          <div class="dash-card">
+            <div class="status-header">
+              <h4>🔐 ADMIN_PASS</h4>
+              <span id="admin-pass-pill" class="pill">—</span>
+            </div>
+            <p class="status-desc">رمز عبور ادمین</p>
+          </div>
+          <div class="dash-card">
+            <div class="status-header">
+              <h4>🔒 JWT_SECRET</h4>
+              <span id="jwt-secret-pill" class="pill">—</span>
+            </div>
+            <p class="status-desc">کلید رمزنگاری JWT</p>
+          </div>
+          <div class="dash-card">
+            <div class="status-header">
+              <h4>📊 KV Binding</h4>
+              <span id="kv-binding-pill" class="pill">—</span>
+            </div>
+            <p class="status-desc">اتصال به KV Database</p>
+          </div>
+        </div>
       </div>
-      <pre id="out" style="white-space:pre-wrap;margin-top:12px"></pre>
+
+      <!-- Quick Setup Guide -->
+      <div class="setup-guide" id="setup-guide" style="display:none">
+        <h3 style="margin: 24px 0 16px; color: var(--white); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">🚀 راهنمای راه‌اندازی سریع</h3>
+        <div class="guide-card glass">
+          <h4>برای راه‌اندازی کامل سیستم:</h4>
+          <ol class="setup-steps">
+            <li>در فایل <code>wrangler.toml</code> بخش KV binding را تنظیم کنید</li>
+            <li>متغیرهای محیطی را در Cloudflare Dashboard تنظیم کنید</li>
+            <li>دستور <code>wrangler deploy</code> را اجرا کنید</li>
+            <li>صفحه را رفرش کنید تا تغییرات اعمال شود</li>
+          </ol>
+          <div class="env-example">
+            <h5>مثال متغیرهای محیطی:</h5>
+            <pre><code>ADMIN_USER=admin
+ADMIN_PASS=your_secure_password
+JWT_SECRET=your_jwt_secret_key</code></pre>
+          </div>
+        </div>
+      </div>
+      <!-- Actions -->
+      <div class="admin-actions">
+        <h3 style="margin: 24px 0 16px; color: var(--white); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">🛠️ عملیات مدیریتی</h3>
+        <div class="action-buttons">
+          <button class="btn primary" id="btnRefresh">🔄 بروزرسانی وضعیت</button>
+          <button class="btn" id="btnList">👥 دریافت لیست کاربران</button>
+          <button class="btn ghost" id="btnClearCache">🗑️ پاک کردن کش</button>
+        </div>
+      </div>
+      
+      <!-- Output Area -->
+      <div class="output-section" style="margin-top: 20px;">
+        <pre id="out" class="output-area"></pre>
+      </div>
     </section>
   </main>
   <script>
@@ -69,14 +184,40 @@
         const authed = !!st.authed;
         $('admin-auth').style.display = authed ? 'none' : '';
         $('admin-dash').style.display = authed ? '' : 'none';
+        
+        // System Status
         const kv = st.kv === 'connected';
         $('kv-pill').className = 'pill ' + (kv ? 'ok':'bad');
-        $('kv-pill').textContent = kv ? 'متصل' : 'نامتصل';
+        $('kv-pill').textContent = kv ? 'متصل' : 'قطع';
+        
         $('admin-pill').className = 'pill ' + (st.adminConfigured ? 'ok':'bad');
-        $('admin-pill').textContent = st.adminConfigured ? 'تعریف شده' : 'تعریف نشده';
+        $('admin-pill').textContent = st.adminConfigured ? 'آماده' : 'نیاز به تنظیم';
+        
         $('users-count').textContent = st.userCount ?? 0;
-        $('svc-pill').className = 'pill ok';
-        $('svc-pill').textContent = 'فعال';
+        
+        const serviceOk = kv && st.adminConfigured;
+        $('svc-pill').className = 'pill ' + (serviceOk ? 'ok':'warn');
+        $('svc-pill').textContent = serviceOk ? 'عملیاتی' : 'نیاز به تنظیم';
+        
+        // Environment Variables Status
+        const env = st.env || {};
+        
+        $('admin-user-pill').className = 'pill ' + (env.ADMIN_USER ? 'ok':'bad');
+        $('admin-user-pill').textContent = env.ADMIN_USER ? 'تنظیم شده' : 'تنظیم نشده';
+        
+        $('admin-pass-pill').className = 'pill ' + (env.ADMIN_PASS ? 'ok':'bad');
+        $('admin-pass-pill').textContent = env.ADMIN_PASS ? 'تنظیم شده' : 'تنظیم نشده';
+        
+        $('jwt-secret-pill').className = 'pill ' + (env.JWT_SECRET ? 'ok':'bad');
+        $('jwt-secret-pill').textContent = env.JWT_SECRET ? 'تنظیم شده' : 'تنظیم نشده';
+        
+        $('kv-binding-pill').className = 'pill ' + (st.kvBinding ? 'ok':'bad');
+        $('kv-binding-pill').textContent = st.kvBinding ? 'متصل' : 'قطع';
+        
+        // Show setup guide if not fully configured
+        const needsSetup = !env.ADMIN_USER || !env.ADMIN_PASS || !env.JWT_SECRET || !st.kvBinding;
+        $('setup-guide').style.display = needsSetup ? '' : 'none';
+        
         $('btnAdminLogout').style.display = authed ? '' : 'none';
       }catch{
         // if status fails, show auth
@@ -102,10 +243,62 @@
         $('out').textContent = JSON.stringify(data, null, 2);
       }catch(err){ $('out').textContent = 'عدم دسترسی یا خطا'; }
     }
+    async function clearCache(){
+      try{
+        await api('/api/admin/clear-cache', { method:'POST' });
+        $('out').textContent = 'کش با موفقیت پاک شد';
+        await refresh();
+      }catch(err){ $('out').textContent = 'خطا در پاک کردن کش: ' + err.message; }
+    }
+    
     $('btnAdminLogin').addEventListener('click', adminLogin);
     $('btnAdminLogout').addEventListener('click', adminLogout);
     $('btnList').addEventListener('click', listUsers);
-    window.addEventListener('DOMContentLoaded', refresh);
+    $('btnRefresh').addEventListener('click', refresh);
+    $('btnClearCache').addEventListener('click', clearCache);
+    // Load public status on page load (before login)
+    async function loadPublicStatus(){
+      try{
+        const st = await api('/api/admin/status');
+        
+        // Update public status indicators
+        const kv = st.kv === 'connected';
+        $('public-kv-pill').className = 'pill ' + (kv ? 'ok':'bad');
+        $('public-kv-pill').textContent = kv ? 'متصل' : 'قطع';
+        
+        const configured = st.adminConfigured;
+        $('public-config-pill').className = 'pill ' + (configured ? 'ok':'bad');
+        $('public-config-pill').textContent = configured ? 'تنظیم شده' : 'نیاز به تنظیم';
+        
+        const serviceOk = kv && configured;
+        $('public-service-pill').className = 'pill ' + (serviceOk ? 'ok':'warn');
+        $('public-service-pill').textContent = serviceOk ? 'عملیاتی' : 'نیاز به تنظیم';
+        
+        // Update status message
+        const messageEl = $('status-message');
+        if(serviceOk){
+          messageEl.innerHTML = '<p class="success-text">✓ سیستم آماده عملیات است</p>';
+        } else if(!kv){
+          messageEl.innerHTML = '<p class="error-text">⚠️ اتصال KV برقرار نیست - لطفاً KV binding را تنظیم کنید</p>';
+        } else if(!configured){
+          messageEl.innerHTML = '<p class="warning-text">⚠️ متغیرهای محیطی تنظیم نشده‌اند</p>';
+        }
+      }catch{
+        // If status API fails, show connection error
+        $('public-kv-pill').className = 'pill bad';
+        $('public-kv-pill').textContent = 'خطا';
+        $('public-config-pill').className = 'pill bad';
+        $('public-config-pill').textContent = 'خطا';
+        $('public-service-pill').className = 'pill bad';
+        $('public-service-pill').textContent = 'خطا';
+        $('status-message').innerHTML = '<p class="error-text">⚠️ عدم دسترسی به API - لطفاً اتصال شبکه را بررسی کنید</p>';
+      }
+    }
+    
+    window.addEventListener('DOMContentLoaded', () => {
+      loadPublicStatus();
+      refresh();
+    });
   </script>
 </body>
 </html>
