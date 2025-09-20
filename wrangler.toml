@@ -1,0 +1,19 @@
+name = "tools"
+compatibility_date = "2024-09-02"
+
+[vars]
+# Set these in dashboard or wrangler secret
+# JWT_SECRET = ""
+# ADMIN_USERNAME = ""
+# ADMIN_PASSWORD = ""
+
+[[kv_namespaces]]
+binding = "USERS_KV"
+id = "main"
+preview_id = "main"
+
+[site]
+bucket = "."
+
+[build]
+command = ""

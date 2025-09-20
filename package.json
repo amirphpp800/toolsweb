@@ -1,0 +1,30 @@
+{
+  "name": "glassblack-dns-wireguard",
+  "version": "1.0.0",
+  "description": "فروش DNS و WireGuard با تم شیشه‌ای مشکی - Cloudflare Pages",
+  "main": "index.html",
+  "scripts": {
+    "dev": "wrangler pages dev .",
+    "deploy": "wrangler pages deploy . --project-name tools",
+    "setup": "powershell -ExecutionPolicy Bypass -File deploy.ps1",
+    "verify": "node verify-setup.js",
+    "login": "wrangler login",
+    "whoami": "wrangler whoami"
+  },
+  "keywords": [
+    "cloudflare",
+    "pages",
+    "dns",
+    "wireguard",
+    "persian",
+    "farsi"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
