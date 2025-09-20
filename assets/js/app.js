@@ -6,7 +6,34 @@ const app = (() => {
   };
 
   const $ = (id) => document.getElementById(id);
-  const msg = (t, type='') => { const el = $('auth-msg'); el.textContent = t || ''; el.style.color = type==='err' ? '#ff6b6b' : '#a0e7a0'; };
+  const msg = (t, type='', targetId='login-msg') => { 
+    const el = $(targetId); 
+    if(el) {
+      el.textContent = t || ''; 
+      el.style.color = type==='err' ? '#ff6b6b' : '#a0e7a0'; 
+    }
+  };
+
+  // Auth tab management
+  let currentTab = 'login';
+  
+  function switchTab(tabName) {
+    // Update tab buttons
+    document.querySelectorAll('.auth-tab').forEach(tab => {
+      tab.classList.toggle('active', tab.dataset.tab === tabName);
+    });
+    
+    // Update forms
+    document.querySelectorAll('.auth-form').forEach(form => {
+      form.classList.toggle('active', form.id === `${tabName}-form`);
+    });
+    
+    currentTab = tabName;
+    
+    // Clear messages
+    msg('', '', 'login-msg');
+    msg('', '', 'register-msg');
+  }
 
   // Captcha state
   let captcha = { text:null, ts:null, sig:null };
@@ -41,6 +68,7 @@ const app = (() => {
   }
 
   let isAuthed = false;
+  let currentUser = null;
 
   async function syncUser(){
     try {
@@ -48,22 +76,47 @@ const app = (() => {
       const userState = document.getElementById('user-state');
       if(me?.username){
         isAuthed = true;
+        currentUser = me;
         userState.textContent = `وارد شده: ${me.username}`;
         document.getElementById('btn-auth').textContent = 'داشبورد';
-        document.getElementById('btn-logout').style.display = '';
+        
+        // Update user info in modal
+        const currentUsername = $('current-username');
+        const currentUuid = $('current-uuid');
+        const currentPlan = $('current-plan');
+        if(currentUsername) currentUsername.textContent = me.username;
+        if(currentUuid) currentUuid.textContent = me.userUUID || '--------';
+        if(currentPlan) currentPlan.textContent = me.plan || 'رایگان';
+        
+        // Show logout section, hide auth forms
+        const logoutSection = $('logout-section');
+        const loginForm = $('login-form');
+        const registerForm = $('register-form');
+        if(logoutSection) logoutSection.style.display = 'block';
+        if(loginForm) loginForm.style.display = 'none';
+        if(registerForm) registerForm.style.display = 'none';
+        
         // cache locally
-        try{ localStorage.setItem('user', JSON.stringify({ username: me.username, at: Date.now() })); }catch{}
+        try{ localStorage.setItem('user', JSON.stringify({ username: me.username, userUUID: me.userUUID, plan: me.plan, at: Date.now() })); }catch{}
+        
         // show profile
         const prof = document.getElementById('profile');
         if(prof){ prof.style.display = ''; $('profile-username').textContent = me.username; }
       } else {
         isAuthed = false;
+        currentUser = null;
         userState.textContent = 'مهمان';
         document.getElementById('btn-auth').textContent = 'ورود / ثبت‌نام';
-        document.getElementById('btn-logout').style.display = 'none';
+        
+        // Show auth forms, hide logout section
+        const logoutSection = $('logout-section');
+        if(logoutSection) logoutSection.style.display = 'none';
+        switchTab('login'); // Reset to login tab
+        
         // hide profile
         const prof = document.getElementById('profile');
         if(prof){ prof.style.display = 'none'; $('profile-username').textContent = '—'; }
+        
         // soft fallback to local cache for UX
         try{
           const cached = JSON.parse(localStorage.getItem('user')||'null');
@@ -72,44 +125,79 @@ const app = (() => {
       }
     } catch {
       isAuthed = false;
+      currentUser = null;
       const userState = document.getElementById('user-state');
       userState.textContent = 'مهمان';
-      document.getElementById('btn-logout').style.display = 'none';
+      
+      // Show auth forms, hide logout section
+      const logoutSection = $('logout-section');
+      if(logoutSection) logoutSection.style.display = 'none';
+      switchTab('login');
     }
   }
 
   function openAuth(){ modal.open(); }
   function closeAuth(){ modal.close(); }
 
-  async function handleAuthSubmit(e){
+  async function handleLoginSubmit(e){
     e.preventDefault();
-    const username = $('username').value.trim().toLowerCase();
-    const password = $('password').value;
-    const captchaInput = $('captcha-input')?.value?.trim();
+    const username = $('login-username').value.trim().toLowerCase();
+    const password = $('login-password').value;
     if(!username || !password) return;
-    msg('در حال پردازش...');
+    
+    msg('در حال پردازش...', '', 'login-msg');
     try{
-      // Try login; if not exists, fallback to register
       await api('/api/auth/login', { method:'POST', body: JSON.stringify({ username, password }) });
-      msg('ورود موفق');
+      msg('ورود موفق', '', 'login-msg');
+      await syncUser();
+      setTimeout(closeAuth, 400);
     } catch(err){
       if(err.status === 404){
-        // Require captcha for register
-        if(!captchaInput){ msg('کپچا را وارد کنید', 'err'); return; }
-        await api('/api/auth/register', { method:'POST', body: JSON.stringify({ username, password, captchaInput, captchaText: captcha.text, captchaTs: captcha.ts, captchaSig: captcha.sig }) });
-        msg('ثبت‌نام و ورود انجام شد');
-        // refresh captcha for next time
-        loadCaptcha();
+        msg('کاربر یافت نشد. لطفا ثبت‌نام کنید.', 'err', 'login-msg');
       } else if(err.status === 401){
-        msg('نام کاربری یا رمز عبور اشتباه است', 'err');
-        return;
+        msg('نام کاربری یا رمز عبور اشتباه است', 'err', 'login-msg');
       } else {
-        msg('خطا؛ دوباره تلاش کنید', 'err');
-        return;
+        msg('خطا؛ دوباره تلاش کنید', 'err', 'login-msg');
       }
     }
-    await syncUser();
-    setTimeout(closeAuth, 400);
+  }
+
+  async function handleRegisterSubmit(e){
+    e.preventDefault();
+    const username = $('register-username').value.trim().toLowerCase();
+    const password = $('register-password').value;
+    const captchaInput = $('captcha-input')?.value?.trim();
+    
+    if(!username || !password) return;
+    if(!captchaInput){ msg('کپچا را وارد کنید', 'err', 'register-msg'); return; }
+    
+    msg('در حال پردازش...', '', 'register-msg');
+    try{
+      await api('/api/auth/register', { 
+        method:'POST', 
+        body: JSON.stringify({ 
+          username, 
+          password, 
+          captchaInput, 
+          captchaText: captcha.text, 
+          captchaTs: captcha.ts, 
+          captchaSig: captcha.sig 
+        }) 
+      });
+      msg('ثبت‌نام موفق انجام شد', '', 'register-msg');
+      // refresh captcha for next time
+      loadCaptcha();
+      await syncUser();
+      setTimeout(closeAuth, 400);
+    } catch(err){
+      if(err.status === 409){
+        msg('این نام کاربری قبلا ثبت شده است', 'err', 'register-msg');
+      } else {
+        msg(err.message || 'خطا؛ دوباره تلاش کنید', 'err', 'register-msg');
+      }
+      // refresh captcha on error
+      loadCaptcha();
+    }
   }
 
   async function logout(){
@@ -165,20 +253,33 @@ const app = (() => {
   }
 
   function initPasswordToggle(){
-    const toggleBtn = document.getElementById('password-toggle');
-    const passwordInput = document.getElementById('password');
+    // Login password toggle
+    const loginToggleBtn = document.getElementById('login-password-toggle');
+    const loginPasswordInput = document.getElementById('login-password');
     
-    if(toggleBtn && passwordInput){
-      toggleBtn.addEventListener('click', () => {
-        const type = passwordInput.type === 'password' ? 'text' : 'password';
-        passwordInput.type = type;
-        toggleBtn.querySelector('.eye-icon').textContent = type === 'password' ? '👁️' : '🙈';
+    if(loginToggleBtn && loginPasswordInput){
+      loginToggleBtn.addEventListener('click', () => {
+        const type = loginPasswordInput.type === 'password' ? 'text' : 'password';
+        loginPasswordInput.type = type;
+        loginToggleBtn.querySelector('.eye-icon').textContent = type === 'password' ? '👁️' : '🙈';
+      });
+    }
+
+    // Register password toggle
+    const registerToggleBtn = document.getElementById('register-password-toggle');
+    const registerPasswordInput = document.getElementById('register-password');
+    
+    if(registerToggleBtn && registerPasswordInput){
+      registerToggleBtn.addEventListener('click', () => {
+        const type = registerPasswordInput.type === 'password' ? 'text' : 'password';
+        registerPasswordInput.type = type;
+        registerToggleBtn.querySelector('.eye-icon').textContent = type === 'password' ? '👁️' : '🙈';
       });
     }
   }
 
   function initPasswordStrength(){
-    const passwordInput = document.getElementById('password');
+    const passwordInput = document.getElementById('register-password');
     const strengthFill = document.querySelector('.strength-fill');
     const strengthText = document.querySelector('.strength-text');
     
@@ -208,31 +309,51 @@ const app = (() => {
   }
 
   function initFormValidation(){
-    const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
-    const usernameFeedback = document.getElementById('username-feedback');
-    const passwordFeedback = document.getElementById('password-feedback');
+    // Login form validation
+    const loginUsernameInput = document.getElementById('login-username');
+    const loginPasswordInput = document.getElementById('login-password');
+    const loginUsernameFeedback = document.getElementById('login-username-feedback');
+    const loginPasswordFeedback = document.getElementById('login-password-feedback');
     
-    if(usernameInput && usernameFeedback){
-      usernameInput.addEventListener('blur', () => {
-        const username = usernameInput.value.trim();
+    if(loginUsernameInput && loginUsernameFeedback){
+      loginUsernameInput.addEventListener('blur', () => {
+        const username = loginUsernameInput.value.trim();
         if(username.length < 3){
-          showFeedback(usernameFeedback, 'نام کاربری باید حداقل ۳ کاراکتر باشد', 'error');
+          showFeedback(loginUsernameFeedback, 'نام کاربری باید حداقل ۳ کاراکتر باشد', 'error');
         } else if(!/^[a-zA-Z0-9_]+$/.test(username)){
-          showFeedback(usernameFeedback, 'فقط حروف انگلیسی، اعداد و _ مجاز است', 'error');
+          showFeedback(loginUsernameFeedback, 'فقط حروف انگلیسی، اعداد و _ مجاز است', 'error');
         } else {
-          showFeedback(usernameFeedback, 'نام کاربری معتبر است', 'success');
+          showFeedback(loginUsernameFeedback, '', 'success');
         }
       });
     }
     
-    if(passwordInput && passwordFeedback){
-      passwordInput.addEventListener('blur', () => {
-        const password = passwordInput.value;
-        if(password.length < 8){
-          showFeedback(passwordFeedback, 'رمز عبور باید حداقل ۸ کاراکتر باشد', 'error');
+    // Register form validation
+    const registerUsernameInput = document.getElementById('register-username');
+    const registerPasswordInput = document.getElementById('register-password');
+    const registerUsernameFeedback = document.getElementById('register-username-feedback');
+    const registerPasswordFeedback = document.getElementById('register-password-feedback');
+    
+    if(registerUsernameInput && registerUsernameFeedback){
+      registerUsernameInput.addEventListener('blur', () => {
+        const username = registerUsernameInput.value.trim();
+        if(username.length < 3){
+          showFeedback(registerUsernameFeedback, 'نام کاربری باید حداقل ۳ کاراکتر باشد', 'error');
+        } else if(!/^[a-zA-Z0-9_]+$/.test(username)){
+          showFeedback(registerUsernameFeedback, 'فقط حروف انگلیسی، اعداد و _ مجاز است', 'error');
         } else {
-          showFeedback(passwordFeedback, '', 'success');
+          showFeedback(registerUsernameFeedback, 'نام کاربری معتبر است', 'success');
+        }
+      });
+    }
+    
+    if(registerPasswordInput && registerPasswordFeedback){
+      registerPasswordInput.addEventListener('blur', () => {
+        const password = registerPasswordInput.value;
+        if(password.length < 8){
+          showFeedback(registerPasswordFeedback, 'رمز عبور باید حداقل ۸ کاراکتر باشد', 'error');
+        } else {
+          showFeedback(registerPasswordFeedback, '', 'success');
         }
       });
     }
@@ -279,6 +400,13 @@ const app = (() => {
     initFormValidation();
     initScrollAnimations();
     
+    // Auth tab switching
+    document.querySelectorAll('.auth-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        switchTab(tab.dataset.tab);
+      });
+    });
+
     // Original functionality
     document.getElementById('btn-auth').addEventListener('click', (e) => {
       if(isAuthed) {
@@ -288,10 +416,23 @@ const app = (() => {
         openAuth();
       }
     });
-    document.getElementById('form-auth').addEventListener('submit', handleAuthSubmit);
-    document.getElementById('btn-logout').addEventListener('click', logout);
-    document.getElementById('btn-learn')?.addEventListener('click', () => location.hash = '#features');
+    
+    // Separate form handlers
+    const loginForm = document.getElementById('form-login');
+    const registerForm = document.getElementById('form-register');
+    if(loginForm) loginForm.addEventListener('submit', handleLoginSubmit);
+    if(registerForm) registerForm.addEventListener('submit', handleRegisterSubmit);
+    
+    // Logout buttons
+    document.getElementById('btn-logout')?.addEventListener('click', logout);
     document.getElementById('btn-logout-profile')?.addEventListener('click', logout);
+    
+    // Dashboard button
+    document.getElementById('btn-dashboard')?.addEventListener('click', () => {
+      window.location.href = '/dashboard.html';
+    });
+    
+    document.getElementById('btn-learn')?.addEventListener('click', () => location.hash = '#features');
     document.getElementById('btn-refresh-captcha')?.addEventListener('click', () => { loadCaptcha(); $('captcha-input').value=''; });
     
     // Enforce requires-auth on CTA buttons

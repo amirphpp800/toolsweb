@@ -8,7 +8,7 @@ export async function onRequestPost({ request, env }){
   if(!user) return error(404, 'کاربر یافت نشد');
   const passHash = await hashPassword(password, user.salt);
   if(passHash !== user.passHash) return error(401, 'رمز نادرست');
-  const token = await signJWT(env.JWT_SECRET, { sub: user.id, username: user.username, role: user.role });
+  const token = await signJWT(env.JWT_SECRET, { sub: user.id, username: user.username, role: user.role, userUUID: user.userUUID });
   const headers = { 'Set-Cookie': setCookie('session', token, { httpOnly:true, secure:true, sameSite:'Lax', path:'/' }) };
-  return json({ ok:true, username: user.username }, { headers });
+  return json({ ok:true, username: user.username, userUUID: user.userUUID, plan: user.plan }, { headers });
 }

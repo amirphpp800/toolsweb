@@ -52,6 +52,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="#activation" class="nav-link" data-section="activation">
+                        <i class="fas fa-key"></i>
+                        <span>فعالسازی حساب</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="#services" class="nav-link" data-section="services">
                         <i class="fas fa-server"></i>
                         <span>سرویس‌ها</span>
@@ -195,6 +201,10 @@
                                 <h2 id="profile-username">نام کاربری</h2>
                                 <p id="profile-email">ایمیل</p>
                                 <p id="profile-join-date">تاریخ عضویت</p>
+                                <div class="profile-meta">
+                                    <span class="profile-uuid">شناسه: <strong id="profile-user-uuid">--------</strong></span>
+                                    <span class="profile-plan">پلن: <strong id="profile-user-plan">رایگان</strong></span>
+                                </div>
                             </div>
                         </div>
 
@@ -243,6 +253,120 @@
                                 <button class="btn btn-secondary" id="enable-2fa-btn">
                                     فعال‌سازی
                                 </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Activation Section -->
+                <section id="activation-section" class="content-section">
+                    <div class="activation-container">
+                        <div class="activation-header">
+                            <h2>فعالسازی حساب کاربری</h2>
+                            <p>برای استفاده از امکانات ویژه، حساب خود را فعال کنید</p>
+                        </div>
+
+                        <div class="current-plan-card">
+                            <div class="plan-info">
+                                <h3>پلن فعلی شما</h3>
+                                <div class="plan-badge" id="current-plan-badge">رایگان</div>
+                                <div class="plan-features" id="current-plan-features">
+                                    <div class="feature-item">
+                                        <i class="fas fa-globe"></i>
+                                        <span>1 رکورد DNS</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <i class="fas fa-shield-virus"></i>
+                                        <span>0 کانفیگ WireGuard</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <i class="fas fa-headset"></i>
+                                        <span>پشتیبانی تیکتی</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="user-uuid">
+                                <h4>شناسه کاربری شما</h4>
+                                <div class="uuid-display" id="user-uuid-display">--------</div>
+                                <button class="btn btn-secondary btn-small" id="copy-uuid-btn">
+                                    <i class="fas fa-copy"></i>
+                                    کپی
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="activation-form-card">
+                            <h3>فعالسازی با کد</h3>
+                            <p>کد فعالسازی 4 کاراکتری خود را وارد کنید</p>
+                            <form id="activation-form">
+                                <div class="form-group">
+                                    <label for="activation-code">کد فعالسازی</label>
+                                    <input type="text" id="activation-code" name="activationCode" 
+                                           maxlength="4" placeholder="مثال: N0RM" 
+                                           style="text-transform: uppercase; text-align: center; font-size: 1.2em; letter-spacing: 0.2em;">
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-key"></i>
+                                    فعالسازی حساب
+                                </button>
+                            </form>
+                            <div id="activation-msg" class="msg"></div>
+                        </div>
+
+                        <div class="plans-comparison">
+                            <h3>مقایسه پلن‌ها</h3>
+                            <div class="plans-grid">
+                                <div class="plan-card">
+                                    <h4>پایه (Normal)</h4>
+                                    <div class="plan-features">
+                                        <div class="feature-item">
+                                            <i class="fas fa-globe"></i>
+                                            <span>5 رکورد DNS</span>
+                                        </div>
+                                        <div class="feature-item">
+                                            <i class="fas fa-shield-virus"></i>
+                                            <span>1 کانفیگ WireGuard</span>
+                                        </div>
+                                        <div class="feature-item">
+                                            <i class="fas fa-headset"></i>
+                                            <span>پشتیبانی تیکتی</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="plan-card featured">
+                                    <h4>حرفه‌ای (Pro)</h4>
+                                    <div class="plan-features">
+                                        <div class="feature-item">
+                                            <i class="fas fa-globe"></i>
+                                            <span>15 رکورد DNS</span>
+                                        </div>
+                                        <div class="feature-item">
+                                            <i class="fas fa-shield-virus"></i>
+                                            <span>3 کانفیگ WireGuard</span>
+                                        </div>
+                                        <div class="feature-item">
+                                            <i class="fas fa-headset"></i>
+                                            <span>پشتیبانی اولویت‌دار</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="plan-card premium">
+                                    <h4>سازمانی (ProMax)</h4>
+                                    <div class="plan-features">
+                                        <div class="feature-item">
+                                            <i class="fas fa-globe"></i>
+                                            <span>DNS نامحدود</span>
+                                        </div>
+                                        <div class="feature-item">
+                                            <i class="fas fa-shield-virus"></i>
+                                            <span>10 کانفیگ WireGuard</span>
+                                        </div>
+                                        <div class="feature-item">
+                                            <i class="fas fa-headset"></i>
+                                            <span>پشتیبانی 24/7</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

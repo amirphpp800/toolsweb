@@ -46,6 +46,12 @@ class Dashboard {
             const joinDate = new Date(this.currentUser.createdAt || Date.now());
             document.getElementById('profile-join-date').textContent = 
                 `عضو از: ${joinDate.toLocaleDateString('fa-IR')}`;
+            
+            // Update UUID and plan in profile
+            const profileUuid = document.getElementById('profile-user-uuid');
+            const profilePlan = document.getElementById('profile-user-plan');
+            if (profileUuid) profileUuid.textContent = this.currentUser.userUUID || '--------';
+            if (profilePlan) profilePlan.textContent = this.getPlanDisplayName(this.currentUser.plan || 'free');
         }
     }
 
@@ -94,6 +100,7 @@ class Dashboard {
         const titles = {
             dashboard: 'داشبورد',
             profile: 'پروفایل',
+            activation: 'فعالسازی حساب',
             services: 'سرویس‌ها',
             dns: 'مدیریت DNS',
             wireguard: 'WireGuard VPN',
@@ -189,6 +196,20 @@ class Dashboard {
         document.getElementById('live-chat-btn')?.addEventListener('click', () => {
             this.startLiveChat();
         });
+
+        // Activation form
+        const activationForm = document.getElementById('activation-form');
+        if(activationForm) {
+            activationForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await this.handleActivation();
+            });
+        }
+
+        // Copy UUID button
+        document.getElementById('copy-uuid-btn')?.addEventListener('click', () => {
+            this.copyUUID();
+        });
     }
 
     async loadDashboardData() {
@@ -283,6 +304,9 @@ class Dashboard {
 
     async loadSectionData(section) {
         switch (section) {
+            case 'activation':
+                await this.loadActivationSection();
+                break;
             case 'services':
                 await this.loadServicesSection();
                 break;
@@ -615,6 +639,185 @@ class Dashboard {
             console.error('Profile update error:', error);
             this.showNotification('خطا در بروزرسانی پروفایل', 'error');
         }
+    }
+
+    // Activation Section Methods
+    async loadActivationSection() {
+        if (this.currentUser) {
+            // Update current plan display
+            this.updatePlanDisplay();
+            
+            // Update user UUID display
+            const uuidDisplay = document.getElementById('user-uuid-display');
+            if (uuidDisplay) {
+                uuidDisplay.textContent = this.currentUser.userUUID || '--------';
+            }
+        }
+    }
+
+    updatePlanDisplay() {
+        const planBadge = document.getElementById('current-plan-badge');
+        const planFeatures = document.getElementById('current-plan-features');
+        
+        if (!this.currentUser || !planBadge || !planFeatures) return;
+
+        const plan = this.currentUser.plan || 'free';
+        const features = this.currentUser.planFeatures || {
+            dnsRecords: 1,
+            wireguardConfigs: 0,
+            support: 'ticket',
+            priority: 'low'
+        };
+
+        // Update plan badge
+        planBadge.textContent = this.getPlanDisplayName(plan);
+        planBadge.className = `plan-badge ${plan}`;
+
+        // Update features display
+        const dnsText = features.dnsRecords === -1 ? 'نامحدود' : features.dnsRecords;
+        planFeatures.innerHTML = `
+            <div class="feature-item">
+                <i class="fas fa-globe"></i>
+                <span>${dnsText} رکورد DNS</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-shield-virus"></i>
+                <span>${features.wireguardConfigs} کانفیگ WireGuard</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-headset"></i>
+                <span>پشتیبانی ${this.getSupportDisplayName(features.support)}</span>
+            </div>
+        `;
+    }
+
+    getPlanDisplayName(plan) {
+        const names = {
+            'free': 'رایگان',
+            'normal': 'پایه',
+            'pro': 'حرفه‌ای',
+            'promax': 'سازمانی'
+        };
+        return names[plan] || 'نامشخص';
+    }
+
+    getSupportDisplayName(support) {
+        const names = {
+            'ticket': 'تیکتی',
+            'priority': 'اولویت‌دار',
+            '24/7': '24/7'
+        };
+        return names[support] || 'تیکتی';
+    }
+
+    async handleActivation() {
+        const activationCodeInput = document.getElementById('activation-code');
+        const activationMsg = document.getElementById('activation-msg');
+        
+        if (!activationCodeInput || !activationMsg) return;
+
+        const activationCode = activationCodeInput.value.trim().toUpperCase();
+        
+        if (!activationCode || activationCode.length !== 4) {
+            this.showActivationMessage('کد فعالسازی باید 4 کاراکتر باشد', 'error');
+            return;
+        }
+
+        this.showActivationMessage('در حال پردازش...', 'info');
+
+        try {
+            const response = await fetch('/api/user/activate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ activationCode })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                this.showActivationMessage(result.message || 'حساب شما با موفقیت فعال شد!', 'success');
+                
+                // Update current user data
+                await this.checkAuth();
+                
+                // Refresh activation section
+                await this.loadActivationSection();
+                
+                // Clear the input
+                activationCodeInput.value = '';
+                
+                // Show notification
+                this.showNotification(`پلن شما به ${this.getPlanDisplayName(result.plan)} ارتقا یافت!`, 'success');
+            } else {
+                this.showActivationMessage(result.error || 'کد فعالسازی نامعتبر است', 'error');
+            }
+        } catch (error) {
+            console.error('Activation error:', error);
+            this.showActivationMessage('خطا در فعالسازی حساب', 'error');
+        }
+    }
+
+    showActivationMessage(message, type) {
+        const msgElement = document.getElementById('activation-msg');
+        if (!msgElement) return;
+
+        msgElement.textContent = message;
+        msgElement.className = `msg ${type}`;
+        
+        const colors = {
+            'success': '#10b981',
+            'error': '#ef4444',
+            'info': '#3b82f6'
+        };
+        
+        msgElement.style.color = colors[type] || '#6b7280';
+    }
+
+    copyUUID() {
+        const uuidDisplay = document.getElementById('user-uuid-display');
+        if (!uuidDisplay) return;
+
+        const uuid = uuidDisplay.textContent;
+        if (uuid && uuid !== '--------') {
+            navigator.clipboard.writeText(uuid).then(() => {
+                this.showNotification('شناسه کاربری کپی شد', 'success');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = uuid;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                this.showNotification('شناسه کاربری کپی شد', 'success');
+            });
+        }
+    }
+
+    showNotification(message, type = 'info') {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            </div>
+        `;
+
+        // Add to page
+        document.body.appendChild(notification);
+
+        // Show notification
+        setTimeout(() => notification.classList.add('show'), 100);
+
+        // Remove notification after 3 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
     }
 }
 

@@ -54,6 +54,16 @@ export async function hashPassword(password, salt){
 
 export const uid = () => crypto.randomUUID?.() || ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
 
+// Generate 8-digit user UUID
+export const generateUserUUID = () => {
+  const chars = '0123456789';
+  let result = '';
+  for (let i = 0; i < 8; i++) {
+    result += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return result;
+};
+
 export const getCookie = (request, name) => {
   const cookie = request.headers.get('cookie') || '';
   for(const part of cookie.split(/;\s*/)){

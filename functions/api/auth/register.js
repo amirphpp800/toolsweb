@@ -1,4 +1,4 @@
-import { json, error, getBody, setCookie, signJWT, hashPassword, uid, USERS_KEY, hmacB64 } from '../../_utils';
+import { json, error, getBody, setCookie, signJWT, hashPassword, uid, generateUserUUID, USERS_KEY, hmacB64 } from '../../_utils';
 
 export async function onRequestPost({ request, env }){
   const { username, password, captchaInput, captchaText, captchaTs, captchaSig } = await getBody(request);
@@ -16,9 +16,26 @@ export async function onRequestPost({ request, env }){
   if(existed) return error(409, 'کاربر موجود است');
   const salt = uid();
   const passHash = await hashPassword(password, salt);
-  const user = { id: uid(), username: username.toLowerCase(), salt, passHash, role:'user', createdAt: Date.now() };
+  const userUUID = generateUserUUID();
+  const user = { 
+    id: uid(), 
+    userUUID: userUUID,
+    username: username.toLowerCase(), 
+    salt, 
+    passHash, 
+    role:'user', 
+    plan: 'free',
+    planFeatures: {
+      dnsRecords: 1,
+      wireguardConfigs: 0,
+      support: 'ticket',
+      priority: 'low'
+    },
+    createdAt: Date.now(),
+    activatedAt: null
+  };
   await env.USERS_KV.put(key, JSON.stringify(user));
-  const token = await signJWT(env.JWT_SECRET, { sub: user.id, username: user.username, role: user.role });
+  const token = await signJWT(env.JWT_SECRET, { sub: user.id, username: user.username, role: user.role, userUUID: user.userUUID });
   const headers = { 'Set-Cookie': setCookie('session', token, { httpOnly:true, secure:true, sameSite:'Lax', path:'/' }) };
-  return json({ ok:true, username: user.username }, { headers });
+  return json({ ok:true, username: user.username, userUUID: user.userUUID }, { headers });
 }

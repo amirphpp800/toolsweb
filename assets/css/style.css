@@ -1072,3 +1072,63 @@ input:checked + .slider:before{
   .status-grid{grid-template-columns: 1fr}
   .status-item{flex-direction: column; text-align: center; gap: 8px}
 }
+
+/* Auth Tabs Styling */
+.auth-tabs {
+  display: flex;
+  margin-bottom: 24px;
+  border-radius: var(--border-radius-small);
+  background: rgba(255,255,255,0.05);
+  padding: 4px;
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  border-radius: var(--border-radius-small);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  font-weight: 500;
+}
+
+.auth-tab.active {
+  background: var(--glass-bg);
+  color: var(--white);
+  border: 1px solid var(--glass-border);
+}
+
+.auth-tab:hover:not(.active) {
+  color: var(--white);
+  background: rgba(255,255,255,0.03);
+}
+
+.auth-form {
+  display: none;
+}
+
+.auth-form.active {
+  display: block;
+}
+
+.user-info-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.user-info-card p {
+  margin: 8px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-info-card strong {
+  color: var(--white);
+  font-weight: 600;
+}
