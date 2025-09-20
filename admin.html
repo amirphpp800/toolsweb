@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>پنل ادمین | TooLs</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+<body>
+  <header class="nav"><div class="nav-inner"><div class="brand">TooLs Admin</div><a class="link" href="/">بازگشت</a></div></header>
+  <main class="section">
+    <h2>داشبورد ادمین</h2>
+
+    <section id="admin-auth" class="glass card" style="margin-bottom:16px">
+      <h3 style="margin-top:0">ورود ادمین</h3>
+      <div class="form">
+        <label>نام کاربری
+          <input id="auser" placeholder="admin" />
+        </label>
+        <label>رمز عبور
+          <input id="apass" type="password" placeholder="******" />
+        </label>
+        <div class="form-actions">
+          <button class="btn primary" id="btnAdminLogin">ورود</button>
+          <button class="btn" id="btnAdminLogout" style="display:none">خروج</button>
+        </div>
+        <div id="amsg" class="msg"></div>
+      </div>
+    </section>
+
+    <section id="admin-dash" class="glass card" style="display:none">
+      <p class="muted" style="margin:0 0 10px">نمایش خلاصه وضعیت سرویس</p>
+      <div class="dash-grid">
+        <div class="dash-card">
+          <h4>اتصال KV</h4>
+          <span id="kv-pill" class="pill">—</span>
+        </div>
+        <div class="dash-card">
+          <h4>ادمین</h4>
+          <span id="admin-pill" class="pill">—</span>
+        </div>
+        <div class="dash-card">
+          <h4>تعداد کاربران</h4>
+          <div id="users-count" class="muted">—</div>
+        </div>
+        <div class="dash-card">
+          <h4>وضعیت سرویس</h4>
+          <span id="svc-pill" class="pill">—</span>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <button class="btn" id="btnList">دریافت لیست کاربران</button>
+      </div>
+      <pre id="out" style="white-space:pre-wrap;margin-top:12px"></pre>
+    </section>
+  </main>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const msg = (t, type='') => { const el = $('amsg'); el.textContent = t || ''; el.style.color = type==='err' ? '#ff6b6b' : '#a0e7a0'; };
+    async function api(path, opts={}){
+      const res = await fetch(path, { headers:{'Content-Type':'application/json', ...(opts.headers||{})}, credentials:'include', ...opts });
+      const text = await res.text(); let data; try{ data = text? JSON.parse(text):{} } catch { data = { raw:text } }
+      if(!res.ok) throw Object.assign(new Error(data?.error||res.statusText), { status:res.status, data });
+      return data;
+    }
+    async function refresh(){
+      try{
+        const st = await api('/api/admin/status');
+        const authed = !!st.authed;
+        $('admin-auth').style.display = authed ? 'none' : '';
+        $('admin-dash').style.display = authed ? '' : 'none';
+        const kv = st.kv === 'connected';
+        $('kv-pill').className = 'pill ' + (kv ? 'ok':'bad');
+        $('kv-pill').textContent = kv ? 'متصل' : 'نامتصل';
+        $('admin-pill').className = 'pill ' + (st.adminConfigured ? 'ok':'bad');
+        $('admin-pill').textContent = st.adminConfigured ? 'تعریف شده' : 'تعریف نشده';
+        $('users-count').textContent = st.userCount ?? 0;
+        $('svc-pill').className = 'pill ok';
+        $('svc-pill').textContent = 'فعال';
+        $('btnAdminLogout').style.display = authed ? '' : 'none';
+      }catch{
+        // if status fails, show auth
+        $('admin-auth').style.display = '';
+        $('admin-dash').style.display = 'none';
+      }
+    }
+    async function adminLogin(){
+      msg('');
+      try{
+        await api('/api/admin/login', { method:'POST', body: JSON.stringify({ username: $('auser').value.trim(), password: $('apass').value }) });
+        msg('ورود موفق');
+        await refresh();
+      }catch(err){ msg('عدم دسترسی', 'err'); }
+    }
+    async function adminLogout(){
+      try{ await api('/api/admin/logout', { method:'POST' }); }catch{}
+      await refresh();
+    }
+    async function listUsers(){
+      try{
+        const data = await api('/api/admin/users');
+        $('out').textContent = JSON.stringify(data, null, 2);
+      }catch(err){ $('out').textContent = 'عدم دسترسی یا خطا'; }
+    }
+    $('btnAdminLogin').addEventListener('click', adminLogin);
+    $('btnAdminLogout').addEventListener('click', adminLogout);
+    $('btnList').addEventListener('click', listUsers);
+    window.addEventListener('DOMContentLoaded', refresh);
+  </script>
+</body>
+</html>

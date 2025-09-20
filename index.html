@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TooLs | ابزارها با طراحی شیشه‌ای مشکی/سفید</title>
+  <meta name="description" content="TooLs - وب‌سایت مدرن با تم شیشه‌ای (مشکی/سفید) و تجربه کاربری نرم." />
+  <!-- Using local font from /assets/fonts via @font-face in CSS -->
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="brand">TooLs</div>
+      <nav class="nav-links">
+        <a href="#features">مزایا</a>
+        <a href="#pricing">پلن‌ها</a>
+        <a href="#contact">تماس</a>
+        <button id="btn-auth" class="btn ghost">ورود / ثبت‌نام</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero glass">
+      <div class="hero-content">
+        <h1>TooLs</h1>
+        <p>مجموعه ابزارهای سبک با طراحی شیشه‌ای و تم مشکی/سفید.</p>
+        <div class="hero-cta">
+          <a href="#pricing" class="btn primary">خرید پلن</a>
+          <button id="btn-learn" class="btn">بیشتر بدانید</button>
+        </div>
+      </div>
+      <div class="glass orb orb-1"></div>
+      <div class="glass orb orb-2"></div>
+      <div class="glass orb orb-3"></div>
+    </section>
+
+    <section id="features" class="section">
+      <h2>چرا ما؟</h2>
+      <div class="cards">
+        <div class="card glass">
+          <h3>سرعت پایدار</h3>
+          <p>شبکه بهینه‌سازی شده برای Latency پایین و Throughput بالا.</p>
+        </div>
+        <div class="card glass">
+          <h3>امنیت واقعی</h3>
+          <p>WireGuard با رمزنگاری مدرن + DNS بدون لاگ.</p>
+        </div>
+        <div class="card glass">
+          <h3>مدیریت آسان</h3>
+          <p>داشبورد ساده برای مشاهده وضعیت و دریافت کانفیگ.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="section">
+      <h2>پلن‌ها</h2>
+      <div class="cards">
+        <div class="card glass price">
+          <h3>پایه</h3>
+          <p class="price-tag">99 هزار تومان / ماه</p>
+          <ul>
+            <li>DNS اختصاصی</li>
+            <li>۱ کانفیگ WireGuard</li>
+            <li>پشتیبانی تیکتی</li>
+          </ul>
+          <button class="btn primary requires-auth">شروع</button>
+        </div>
+        <div class="card glass price featured">
+          <h3>حرفه‌ای</h3>
+          <p class="price-tag">199 هزار تومان / ماه</p>
+          <ul>
+            <li>DNS اختصاصی</li>
+            <li>۳ کانفیگ WireGuard</li>
+            <li>پشتیبانی سریع</li>
+          </ul>
+          <button class="btn primary" onclick="app.openAuth()">شروع</button>
+        </div>
+        <div class="card glass price">
+          <h3>سازمانی</h3>
+          <p class="price-tag">تماس بگیرید</p>
+          <ul>
+            <li>DNS اختصاصی</li>
+            <li>کانفیگ نامحدود</li>
+            <li>پشتیبانی اختصاصی</li>
+          </ul>
+          <a class="btn" href="#contact">ارتباط</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section">
+      <h2>ارتباط با ما</h2>
+      <p>برای سوالات و همکاری از طریق تلگرام در تماس باشید.</p>
+      <div class="contact glass">
+        <a class="btn ghost" href="https://t.me/Minimalcraft" target="_blank">تلگرام من</a>
+        <a class="btn ghost" href="https://t.me/PersianEdge" target="_blank">کانال اسپانسر 1</a>
+        <a class="btn ghost" href="https://t.me/NoiDUsers" target="_blank">کانال اسپانسر 2</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner glass">
+      <div id="user-state">مهمان</div>
+      <div>
+        <a href="/admin.html" class="link">پنل ادمین</a>
+      </div>
+      <div>© <span id="year"></span> TooLs</div>
+    </div>
+  </footer>
+
+  <div id="modal-auth" class="modal hidden">
+    <div class="modal-content glass">
+      <button class="modal-close" aria-label="Close" onclick="app.closeAuth()">×</button>
+      <h3>ورود / ثبت‌نام</h3>
+      <form id="form-auth" class="form">
+        <label>
+          نام کاربری
+          <input type="text" id="username" required placeholder="username" />
+        </label>
+        <label>
+          رمز عبور
+          <input type="password" id="password" required placeholder="حداقل ۸ کاراکتر" minlength="8" />
+        </label>
+        <div id="captcha-box" class="captcha-box">
+          <div class="captcha-row">
+            <span id="captcha-text" class="captcha-text">— — — —</span>
+            <button type="button" id="btn-refresh-captcha" class="btn ghost small">تازه‌سازی</button>
+          </div>
+          <label>
+            تایید: «من ربات نیستم»
+            <input type="text" id="captcha-input" placeholder="کد نمایش داده شده" autocomplete="off" />
+          </label>
+          <small class="muted">حروف و اعداد به طول ۴ یا ۵ کاراکتر</small>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn primary">ادامه</button>
+          <button type="button" class="btn" id="btn-logout" style="display:none">خروج</button>
+        </div>
+        <small class="muted">با ادامه، با شرایط استفاده موافق هستید.</small>
+        <div id="auth-msg" class="msg"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Profile section (visible when logged in) -->
+  <section id="profile" class="section" style="display:none">
+    <h2>حساب کاربری</h2>
+    <div class="card glass">
+      <p>کاربر: <strong id="profile-username">—</strong></p>
+      <div class="form-actions">
+        <button type="button" class="btn" id="btn-logout-profile">خروج</button>
+      </div>
+    </div>
+  </section>
+
+  <script src="/assets/js/app.js"></script>
+</body>
+</html>
