@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد کاربری - GlassBlack</title>
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-spinner"></div>
+        <p>در حال بارگذاری...</p>
+    </div>
+
+    <!-- Main Container -->
+    <div id="main-container" class="main-container" style="display: none;">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>GlassBlack</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-info">
+                    <h3 id="username-display">کاربر</h3>
+                    <p id="user-status">آنلاین</p>
+                </div>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item active">
+                    <a href="#dashboard" class="nav-link" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>داشبورد</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#profile" class="nav-link" data-section="profile">
+                        <i class="fas fa-user-edit"></i>
+                        <span>پروفایل</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#services" class="nav-link" data-section="services">
+                        <i class="fas fa-server"></i>
+                        <span>سرویس‌ها</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#dns" class="nav-link" data-section="dns">
+                        <i class="fas fa-globe"></i>
+                        <span>DNS</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#wireguard" class="nav-link" data-section="wireguard">
+                        <i class="fas fa-shield-virus"></i>
+                        <span>WireGuard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#billing" class="nav-link" data-section="billing">
+                        <i class="fas fa-credit-card"></i>
+                        <span>صورتحساب</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#support" class="nav-link" data-section="support">
+                        <i class="fas fa-headset"></i>
+                        <span>پشتیبانی</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#settings" class="nav-link" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>تنظیمات</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" id="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>خروج</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 id="page-title">داشبورد</h1>
+                </div>
+                <div class="header-right">
+                    <div class="notifications">
+                        <button class="notification-btn">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+                    </div>
+                    <div class="user-menu">
+                        <button class="user-menu-btn">
+                            <i class="fas fa-user-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Sections -->
+            <div class="content-wrapper">
+                <!-- Dashboard Section -->
+                <section id="dashboard-section" class="content-section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-server"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>سرویس‌های فعال</h3>
+                                <p class="stat-number" id="active-services">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>DNS Records</h3>
+                                <p class="stat-number" id="dns-records">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-shield-virus"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>WireGuard Configs</h3>
+                                <p class="stat-number" id="wg-configs">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>اعتبار باقی‌مانده</h3>
+                                <p class="stat-number" id="remaining-credit">0 تومان</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <h3>فعالیت‌های اخیر</h3>
+                            <div class="activity-list" id="recent-activities">
+                                <!-- Activities will be loaded here -->
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>سرویس‌های من</h3>
+                            <div class="services-list" id="user-services">
+                                <!-- Services will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Profile Section -->
+                <section id="profile-section" class="content-section">
+                    <div class="profile-container">
+                        <div class="profile-header">
+                            <div class="profile-avatar-large">
+                                <i class="fas fa-user-circle"></i>
+                                <button class="change-avatar-btn">
+                                    <i class="fas fa-camera"></i>
+                                </button>
+                            </div>
+                            <div class="profile-info">
+                                <h2 id="profile-username">نام کاربری</h2>
+                                <p id="profile-email">ایمیل</p>
+                                <p id="profile-join-date">تاریخ عضویت</p>
+                            </div>
+                        </div>
+
+                        <div class="profile-form">
+                            <h3>ویرایش اطلاعات</h3>
+                            <form id="profile-update-form">
+                                <div class="form-group">
+                                    <label for="display-name">نام نمایشی</label>
+                                    <input type="text" id="display-name" name="displayName">
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">ایمیل</label>
+                                    <input type="email" id="email" name="email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">شماره تلفن</label>
+                                    <input type="tel" id="phone" name="phone">
+                                </div>
+                                <div class="form-group">
+                                    <label for="bio">درباره من</label>
+                                    <textarea id="bio" name="bio" rows="4"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    ذخیره تغییرات
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="security-section">
+                            <h3>امنیت حساب</h3>
+                            <div class="security-item">
+                                <div class="security-info">
+                                    <h4>تغییر رمز عبور</h4>
+                                    <p>آخرین تغییر: 30 روز پیش</p>
+                                </div>
+                                <button class="btn btn-secondary" id="change-password-btn">
+                                    تغییر رمز
+                                </button>
+                            </div>
+                            <div class="security-item">
+                                <div class="security-info">
+                                    <h4>احراز هویت دو مرحله‌ای</h4>
+                                    <p>وضعیت: غیرفعال</p>
+                                </div>
+                                <button class="btn btn-secondary" id="enable-2fa-btn">
+                                    فعال‌سازی
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Services Section -->
+                <section id="services-section" class="content-section">
+                    <div class="services-header">
+                        <h2>سرویس‌های من</h2>
+                        <button class="btn btn-primary" id="add-service-btn">
+                            <i class="fas fa-plus"></i>
+                            سرویس جدید
+                        </button>
+                    </div>
+                    <div class="services-grid" id="services-grid">
+                        <!-- Services will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- DNS Section -->
+                <section id="dns-section" class="content-section">
+                    <div class="dns-header">
+                        <h2>مدیریت DNS</h2>
+                        <button class="btn btn-primary" id="add-dns-btn">
+                            <i class="fas fa-plus"></i>
+                            رکورد جدید
+                        </button>
+                    </div>
+                    <div class="dns-table-container">
+                        <table class="dns-table">
+                            <thead>
+                                <tr>
+                                    <th>نام</th>
+                                    <th>نوع</th>
+                                    <th>مقدار</th>
+                                    <th>TTL</th>
+                                    <th>وضعیت</th>
+                                    <th>عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dns-records-table">
+                                <!-- DNS records will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- WireGuard Section -->
+                <section id="wireguard-section" class="content-section">
+                    <div class="wireguard-header">
+                        <h2>WireGuard VPN</h2>
+                        <button class="btn btn-primary" id="add-wireguard-btn">
+                            <i class="fas fa-plus"></i>
+                            کانفیگ جدید
+                        </button>
+                    </div>
+                    <div class="wireguard-configs" id="wireguard-configs">
+                        <!-- WireGuard configs will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Billing Section -->
+                <section id="billing-section" class="content-section">
+                    <div class="billing-overview">
+                        <div class="billing-card">
+                            <h3>اعتبار فعلی</h3>
+                            <p class="balance-amount" id="current-balance">0 تومان</p>
+                            <button class="btn btn-primary" id="add-credit-btn">
+                                <i class="fas fa-plus"></i>
+                                افزایش اعتبار
+                            </button>
+                        </div>
+                        <div class="billing-card">
+                            <h3>هزینه ماهانه</h3>
+                            <p class="monthly-cost" id="monthly-cost">0 تومان</p>
+                        </div>
+                    </div>
+                    <div class="billing-history">
+                        <h3>تاریخچه تراکنش‌ها</h3>
+                        <div class="transactions-table" id="transactions-table">
+                            <!-- Transactions will be loaded here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Support Section -->
+                <section id="support-section" class="content-section">
+                    <div class="support-container">
+                        <div class="support-header">
+                            <h2>پشتیبانی</h2>
+                        </div>
+                        <div class="support-grid">
+                            <div class="support-card">
+                                <i class="fas fa-ticket-alt"></i>
+                                <h3>تیکت جدید</h3>
+                                <p>مشکل خود را گزارش دهید</p>
+                                <button class="btn btn-primary" id="new-ticket-btn">
+                                    ایجاد تیکت
+                                </button>
+                            </div>
+                            <div class="support-card">
+                                <i class="fas fa-comments"></i>
+                                <h3>چت آنلاین</h3>
+                                <p>گفتگو با پشتیبانی</p>
+                                <button class="btn btn-secondary" id="live-chat-btn">
+                                    شروع چت
+                                </button>
+                            </div>
+                            <div class="support-card">
+                                <i class="fas fa-book"></i>
+                                <h3>راهنما</h3>
+                                <p>مطالعه مستندات</p>
+                                <button class="btn btn-secondary" id="docs-btn">
+                                    مشاهده راهنما
+                                </button>
+                            </div>
+                        </div>
+                        <div class="tickets-list">
+                            <h3>تیکت‌های من</h3>
+                            <div id="user-tickets">
+                                <!-- Tickets will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section id="settings-section" class="content-section">
+                    <div class="settings-container">
+                        <h2>تنظیمات</h2>
+                        <div class="settings-grid">
+                            <div class="settings-card">
+                                <h3>تنظیمات عمومی</h3>
+                                <div class="setting-item">
+                                    <label for="language-select">زبان</label>
+                                    <select id="language-select">
+                                        <option value="fa">فارسی</option>
+                                        <option value="en">English</option>
+                                    </select>
+                                </div>
+                                <div class="setting-item">
+                                    <label for="theme-select">تم</label>
+                                    <select id="theme-select">
+                                        <option value="dark">تیره</option>
+                                        <option value="light">روشن</option>
+                                        <option value="auto">خودکار</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="settings-card">
+                                <h3>اعلان‌ها</h3>
+                                <div class="setting-item">
+                                    <label class="switch">
+                                        <input type="checkbox" id="email-notifications">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span>اعلان‌های ایمیل</span>
+                                </div>
+                                <div class="setting-item">
+                                    <label class="switch">
+                                        <input type="checkbox" id="sms-notifications">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span>اعلان‌های پیامکی</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-overlay" class="modal-overlay">
+        <!-- Modals will be inserted here -->
+    </div>
+
+    <script src="assets/js/dashboard.js"></script>
+</body>
+</html>

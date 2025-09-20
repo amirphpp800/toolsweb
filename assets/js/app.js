@@ -49,7 +49,7 @@ const app = (() => {
       if(me?.username){
         isAuthed = true;
         userState.textContent = `وارد شده: ${me.username}`;
-        document.getElementById('btn-auth').textContent = 'حساب کاربری';
+        document.getElementById('btn-auth').textContent = 'داشبورد';
         document.getElementById('btn-logout').style.display = '';
         // cache locally
         try{ localStorage.setItem('user', JSON.stringify({ username: me.username, at: Date.now() })); }catch{}
@@ -280,7 +280,14 @@ const app = (() => {
     initScrollAnimations();
     
     // Original functionality
-    document.getElementById('btn-auth').addEventListener('click', openAuth);
+    document.getElementById('btn-auth').addEventListener('click', (e) => {
+      if(isAuthed) {
+        // Redirect to dashboard
+        window.location.href = '/dashboard.html';
+      } else {
+        openAuth();
+      }
+    });
     document.getElementById('form-auth').addEventListener('submit', handleAuthSubmit);
     document.getElementById('btn-logout').addEventListener('click', logout);
     document.getElementById('btn-learn')?.addEventListener('click', () => location.hash = '#features');
