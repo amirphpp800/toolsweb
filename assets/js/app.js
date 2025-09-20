@@ -32,11 +32,14 @@ const app = (() => {
     }
   }
 
+  let isAuthed = false;
+
   async function syncUser(){
     try {
       const me = await api('/api/auth/me');
       const userState = document.getElementById('user-state');
       if(me?.username){
+        isAuthed = true;
         userState.textContent = `وارد شده: ${me.username}`;
         document.getElementById('btn-auth').textContent = 'حساب کاربری';
         document.getElementById('btn-logout').style.display = '';
@@ -46,6 +49,7 @@ const app = (() => {
         const prof = document.getElementById('profile');
         if(prof){ prof.style.display = ''; $('profile-username').textContent = me.username; }
       } else {
+        isAuthed = false;
         userState.textContent = 'مهمان';
         document.getElementById('btn-auth').textContent = 'ورود / ثبت‌نام';
         document.getElementById('btn-logout').style.display = 'none';
@@ -59,6 +63,7 @@ const app = (() => {
         }catch{}
       }
     } catch {
+      isAuthed = false;
       const userState = document.getElementById('user-state');
       userState.textContent = 'مهمان';
       document.getElementById('btn-logout').style.display = 'none';
@@ -114,22 +119,18 @@ const app = (() => {
     document.getElementById('btn-learn')?.addEventListener('click', () => location.hash = '#features');
     document.getElementById('btn-logout-profile')?.addEventListener('click', logout);
     document.getElementById('btn-refresh-captcha')?.addEventListener('click', () => { loadCaptcha(); $('captcha-input').value=''; });
-    // Theme toggle
-    const root = document.documentElement;
-    const savedTheme = (()=>{ try{ return localStorage.getItem('theme'); }catch{ return null } })();
-    if(savedTheme === 'light') root.setAttribute('data-theme','light');
-    document.getElementById('btn-theme')?.addEventListener('click', () => {
-      const isLight = root.getAttribute('data-theme') === 'light';
-      if(isLight){
-        root.removeAttribute('data-theme');
-        try{ localStorage.setItem('theme','dark'); }catch{}
-      } else {
-        root.setAttribute('data-theme','light');
-        try{ localStorage.setItem('theme','light'); }catch{}
-      }
-    });
+    // Enforce requires-auth on CTA buttons
+    function bindAuthRequired(){
+      document.querySelectorAll('.requires-auth').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          if(!isAuthed){ e.preventDefault(); openAuth(); }
+          else { location.hash = '#profile'; }
+        });
+      });
+    }
     loadCaptcha();
     syncUser();
+    bindAuthRequired();
   }
 
   return { init, openAuth, closeAuth };

@@ -1,35 +1,18 @@
-/* Glass Black Theme */
+/* Glass Black & White Theme (Monochrome) */
 :root{
-  /* Dark theme (black) */
-  --bg: #050506;
-  --white: #f3f3f4;
-  --muted: #a0a0a8;
-  --primary: #6b46ff;
-  --accent: #00cfe3;
+  --bg: #000000;
+  --white: #ffffff;
+  --muted: #bfbfbf;
   --glass-bg: rgba(255,255,255,0.06);
-  --glass-border: rgba(255,255,255,0.18);
-  --shadow: 0 10px 30px rgba(0,0,0,0.45);
-}
-
-[data-theme="light"]{
-  /* Light theme (white) */
-  --bg: #f8f9fb;
-  --white: #0d0e11;
-  --muted: #42424a;
-  --primary: #5a35e6;
-  --accent: #008aa0;
-  --glass-bg: rgba(255,255,255,0.9);
-  --glass-border: rgba(0,0,0,0.08);
-  --shadow: 0 10px 30px rgba(0,0,0,0.12);
+  --glass-border: rgba(255,255,255,0.20);
+  --shadow: 0 10px 30px rgba(0,0,0,0.6);
 }
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
   margin:0;
   font-family:'Dana', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: radial-gradient(1200px 800px at 80% -10%, rgba(124,92,255,0.12), transparent),
-              radial-gradient(1000px 600px at -10% 5%, rgba(0,224,255,0.10), transparent),
-              var(--bg);
+  background: var(--bg);
   color: var(--white);
   transition: background 400ms ease;
 }
@@ -60,13 +43,13 @@ body{
 .nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 20px}
 .brand{font-weight:700;letter-spacing:.5px}
 .nav-links{display:flex;gap:18px;align-items:center}
-.nav a{color:var(--white);text-decoration:none;opacity:.8}
+.nav a{color:var(--white);text-decoration:none;opacity:.85}
 .nav a:hover{opacity:1}
 
 /* Links: remove underlines site-wide, consistent hover */
-a{color:var(--accent); text-decoration:none}
+a{color:var(--white); text-decoration:none}
 a:hover{opacity:.9}
-.link{color:var(--accent);text-decoration:none}
+.link{color:var(--white);text-decoration:none}
 
 /* Hero */
 .hero{position:relative;display:grid;place-items:center;min-height:72vh;padding:80px 20px}
@@ -81,22 +64,22 @@ a:hover{opacity:.9}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
 .card{padding:18px;border-radius:16px;border:1px solid var(--glass-border);box-shadow:var(--shadow)}
 .card.price{display:flex;flex-direction:column;gap:10px}
-.card.price .price-tag{font-weight:700;color:var(--accent)}
-.card.featured{outline:1px solid var(--accent)}
+.card.price .price-tag{font-weight:700;color:var(--white)}
+.card.featured{outline:1px solid var(--white)}
 
 .card:hover{transform:translateY(-2px);transition:transform .2s ease}
 
 /* Glass */
 .glass{background:var(--glass-bg);backdrop-filter: blur(14px)}
 .orb{position:absolute;border-radius:50%;filter: blur(40px);opacity:.45}
-.orb-1{width:320px;height:320px;left:10%;top:10%;background: radial-gradient(circle at 30% 30%, var(--primary), transparent)}
-.orb-2{width:260px;height:260px;right:15%;bottom:18%;background: radial-gradient(circle at 60% 60%, var(--accent), transparent)}
-.orb-3{width:180px;height:180px;left:20%;bottom:5%;background: radial-gradient(circle at 40% 60%, #ff5cc8, transparent)}
+.orb-1{width:320px;height:320px;left:10%;top:10%;background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.20), transparent)}
+.orb-2{width:260px;height:260px;right:15%;bottom:18%;background: radial-gradient(circle at 60% 60%, rgba(255,255,255,0.16), transparent)}
+.orb-3{width:180px;height:180px;left:20%;bottom:5%;background: radial-gradient(circle at 40% 60%, rgba(255,255,255,0.12), transparent)}
 
 /* Buttons */
 .btn{appearance:none;border:1px solid var(--glass-border);background:transparent;color:var(--white);padding:10px 14px;border-radius:12px;cursor:pointer;transition:.2s;box-shadow:var(--shadow)}
 .btn:hover{transform:translateY(-1px);border-color:rgba(255,255,255,0.3)}
-.btn.primary{background:linear-gradient(135deg,var(--primary),var(--accent));border:none}
+.btn.primary{background:var(--white); color:#000; border:none}
 .btn.ghost{background:rgba(255,255,255,0.06)}
 .btn.small{padding:6px 10px;border-radius:10px}
 /* keep .link rule above */
@@ -129,9 +112,9 @@ a:hover{opacity:.9}
 .dash-card{padding:18px;border-radius:18px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);box-shadow:var(--shadow)}
 .dash-card h4{margin:0 0 10px}
 .pill{display:inline-block;padding:6px 10px;border-radius:999px;font-size:13px}
-.pill.ok{background:#123a2a;color:#98f0c8;border:1px solid rgba(152,240,200,0.25)}
-.pill.bad{background:#3a2020;color:#f0a0a0;border:1px solid rgba(240,160,160,0.25)}
-.pill.warn{background:#3a3620;color:#f0e0a0;border:1px solid rgba(240,224,160,0.25)}
+.pill.ok{background:rgba(255,255,255,0.10);color:#ffffff;border:1px solid rgba(255,255,255,0.25)}
+.pill.bad{background:rgba(255,255,255,0.06);color:#ffffff;border:1px solid rgba(255,255,255,0.20)}
+.pill.warn{background:rgba(255,255,255,0.08);color:#ffffff;border:1px solid rgba(255,255,255,0.22)}
 
 /* Animations */
 @keyframes pop{from{transform:scale(.98);opacity:0}to{transform:scale(1);opacity:1}}
